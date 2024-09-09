@@ -18,7 +18,7 @@ To run this project, you'll need:
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/Ghonem23/DigiSay-Task-Project
+git clone https://github.com/Ghonem23/Rightshero-Project
 cd rightshero_project
 ```
 
