@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Selection</title>
+</head>
+<body>
+    <h1>Select Category</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div id="category-container">
+            {% for category in categories %}
+                <input type="checkbox" name="category" value="{{ category.id }}" class="category-checkbox">{{ category.name }}<br>
+            {% endfor %}
+        </div>
+        <div id="subcategories-container"></div>
+    </form>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).on('change', '.category-checkbox', function() {
+            var categoryId = $(this).val();  // Get the selected category ID
+            if ($(this).is(':checked')) {  // Check if the checkbox is checked
+                $.ajax({
+                    url: "{% url 'load_subcategories' %}",
+                    data: {
+                        'category_id': categoryId
+                    },
+                    success: function (data) {
+                        $('#subcategories-container').append(data);  // Append the subcategories dynamically
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

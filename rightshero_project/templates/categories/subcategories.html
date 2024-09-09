@@ -1,0 +1,5 @@
+<div class="subcategory-group" id="subcategory-group-{{ subcategories.0.parent.id }}">
+  {% for subcategory in subcategories %}
+      <input type="checkbox" name="subcategory" value="{{ subcategory.id }}" class="category-checkbox">{{ subcategory.name }}<br>
+  {% endfor %}
+</div>
