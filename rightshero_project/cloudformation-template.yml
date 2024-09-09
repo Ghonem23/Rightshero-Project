@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template for Rightshero
+
+Resources:
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties: 
+      InstanceType: t2.micro  # Use t3.micro if needed
+      ImageId: ami-0c55b159cbfafe1f0  # Amazon Linux 2 (adjust for your region)
+      KeyName: your-keypair-name  # Replace with your key pair name
+      IamInstanceProfile: !Ref MyIAMRoleInstanceProfile
+      SecurityGroupIds:
+        - !Ref MySecurityGroup
+      UserData: 
+        Fn::Base64: |
+          #!/bin/bash
+          yum update -y
+          yum install docker -y
+          systemctl start docker
+          systemctl enable docker
+          docker run -d -p 80:80 rightshero_project-web
+
+  MyIAMRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/AdministratorAccess
+
+  MyIAMRoleInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      Roles: 
+        - !Ref MyIAMRole
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: Enable SSH, HTTP, and HTTPS
+      SecurityGroupIngress: 
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
